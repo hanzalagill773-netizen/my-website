@@ -305,6 +305,98 @@
   .view-toggle:hover{ border-color:var(--brass); }
   .view-toggle.active{ color:var(--brass-bright); border-color:var(--brass); }
 
+  .view-toggle-group{
+    position:absolute;
+    top:12px;
+    right:14px;
+    display:flex;
+    gap:8px;
+  }
+  .view-toggle-group .view-toggle{ position:static; }
+
+  .walk-overlay{
+    position:absolute;
+    inset:0;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    gap:10px;
+    background:rgba(8,14,22,0.72);
+    text-align:center;
+    padding:20px;
+    cursor:pointer;
+  }
+  .walk-overlay.show{ display:flex; }
+  .walk-overlay h4{
+    font-family:var(--display);
+    font-size:18px;
+    color:var(--paper);
+    margin:0;
+  }
+  .walk-overlay p{
+    font-family:var(--mono);
+    font-size:11.5px;
+    color:var(--muted);
+    margin:0;
+    max-width:280px;
+  }
+  .walk-exit-hint{
+    position:absolute;
+    bottom:12px;
+    right:14px;
+    font-family:var(--mono);
+    font-size:10.5px;
+    color:var(--muted-dim);
+    letter-spacing:0.03em;
+    pointer-events:none;
+    display:none;
+  }
+  .walk-exit-hint.show{ display:block; }
+
+  .floor-tabs{
+    display:flex;
+    gap:8px;
+    margin-bottom:14px;
+    flex-wrap:wrap;
+  }
+  .floor-tab{
+    background:var(--ink-900);
+    border:1px solid var(--line-strong);
+    color:var(--muted);
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    padding:7px 14px;
+    border-radius:var(--radius);
+    cursor:pointer;
+  }
+  .floor-tab.active{ color:var(--brass-bright); border-color:var(--brass); }
+  .floorplan-host{
+    width:100%;
+    background:var(--ink-900);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+  }
+  .floorplan-host svg{ width:100%; height:auto; display:block; }
+  .floor-summary{
+    margin-top:14px;
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--muted);
+    letter-spacing:0.02em;
+    line-height:1.7;
+  }
+  .floor-summary strong{ color:var(--paper); }
+  .floorplan-empty{
+    padding:40px 20px;
+    text-align:center;
+    color:var(--muted-dim);
+    font-family:var(--mono);
+    font-size:12px;
+  }
+
   .canvas-hint{
     position:absolute;
     bottom:12px;
@@ -575,14 +667,33 @@
             Enter a plot width and length, then generate<br/>your home to see the 3D model.
           </div>
           <div class="canvas-hint" id="canvasHint" style="display:none;">Drag to orbit · Scroll to zoom</div>
-          <button type="button" id="interiorToggleBtn" class="view-toggle" style="display:none;">Show interior</button>
+          <div class="view-toggle-group" id="viewToggleGroup" style="display:none;">
+            <button type="button" id="interiorToggleBtn" class="view-toggle">Show interior</button>
+            <button type="button" id="walkToggleBtn" class="view-toggle">Walk through</button>
+          </div>
+          <div class="walk-overlay" id="walkOverlay">
+            <h4>Click to walk through</h4>
+            <p>WASD or arrow keys to move, mouse to look around, Esc to exit back to the model view.</p>
+          </div>
+          <div class="walk-exit-hint" id="walkExitHint">Esc to exit walkthrough</div>
         </div>
       </div>
 
     </main>
 
+    <section class="floorplan">
+      <div class="section-title">02 — Floor plan</div>
+      <div class="panel" style="padding:18px;">
+        <div class="floor-tabs" id="floorTabs"></div>
+        <div class="floorplan-host" id="floorPlanHost">
+          <div class="floorplan-empty">Generate your home to see a dimensioned floor plan with room-by-room sizes.</div>
+        </div>
+        <div class="floor-summary" id="floorSummary"></div>
+      </div>
+    </section>
+
     <section class="styles">
-      <div class="section-title">02 — Design styles</div>
+      <div class="section-title">03 — Design styles</div>
       <div class="style-grid" id="styleGrid">
         <button type="button" class="style-card" data-style="modern">
           <span class="sc-index">A</span>
@@ -608,7 +719,7 @@
     </section>
 
     <section class="schedule">
-      <div class="section-title">03 — Furniture schedule</div>
+      <div class="section-title">04 — Furniture schedule</div>
       <table id="furnitureTable">
         <thead>
           <tr>

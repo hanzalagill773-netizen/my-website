@@ -397,6 +397,71 @@
     font-size:12px;
   }
 
+  .cost-empty{
+    padding:30px 20px;
+    text-align:center;
+    color:var(--muted-dim);
+    font-family:var(--mono);
+    font-size:12px;
+  }
+  .cost-rows{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+  }
+  .cost-row{
+    display:flex;
+    justify-content:space-between;
+    padding:9px 4px;
+    border-bottom:1px solid var(--line);
+    font-size:13px;
+  }
+  .cost-row .label{ color:var(--muted); }
+  .cost-row .value{ font-family:var(--mono); color:var(--paper); }
+  .cost-row.total{
+    border-top:1px solid var(--line-strong);
+    border-bottom:none;
+    margin-top:6px;
+    padding-top:14px;
+    font-family:var(--display);
+    font-size:17px;
+    font-weight:600;
+  }
+  .cost-row.total .label{ color:var(--paper); }
+  .cost-row.total .value{ color:var(--brass-bright); font-family:var(--display); font-size:17px; font-weight:600; }
+  .cost-disclaimer{
+    margin-top:14px;
+    font-size:11.5px;
+    line-height:1.55;
+    color:var(--muted-dim);
+    font-style:italic;
+  }
+
+  .tips-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap:14px;
+  }
+  .tip-card{
+    background:var(--panel);
+    border:1px solid var(--line-strong);
+    border-radius:var(--radius);
+    padding:14px 16px;
+  }
+  .tip-card h4{
+    font-family:var(--display);
+    font-size:14.5px;
+    font-weight:600;
+    color:var(--brass-bright);
+    margin:0 0 6px;
+  }
+  .tip-card p{
+    font-size:12.5px;
+    line-height:1.55;
+    color:var(--muted);
+    margin:0;
+  }
+
   .canvas-hint{
     position:absolute;
     bottom:12px;
@@ -575,33 +640,32 @@
 
   .tb-meta span{ color:var(--muted); }
 
-  /* gold easter-egg block */
-  .gold-pop{
+  /* brick-scatter easter egg */
+  .brick-pop{
     position:fixed;
     z-index:200;
     pointer-events:none;
-    width:18px;
-    height:18px;
-    background: linear-gradient(135deg, var(--brass-bright), var(--brass));
+    width:16px;
+    height:11px;
+    background: linear-gradient(135deg, #9a9a96, #6e6e6a);
     box-shadow:
       0 0 0 1px rgba(0,0,0,0.4),
-      3px 3px 0 rgba(0,0,0,0.35),
-      0 0 18px rgba(201,162,39,0.55);
-    transform: translate(-50%,-50%) scale(0) rotate(8deg);
-    animation: goldPop 1.1s cubic-bezier(.2,1.6,.4,1) forwards;
+      2px 2px 0 rgba(0,0,0,0.3);
+    transform: translate(-50%,-50%) scale(0) rotate(0deg);
+    animation-name: brickPop;
+    animation-timing-function: cubic-bezier(.2,1.6,.4,1);
+    animation-fill-mode: forwards;
   }
 
-  @keyframes goldPop{
-    0%{ transform: translate(-50%,-50%) scale(0) rotate(8deg); opacity:0; }
-    18%{ transform: translate(-50%,-58%) scale(1.15) rotate(-4deg); opacity:1; }
-    32%{ transform: translate(-50%,-50%) scale(0.95) rotate(2deg); opacity:1; }
-    75%{ opacity:1; }
-    100%{ transform: translate(-50%,-72%) scale(0.9) rotate(2deg); opacity:0; }
+  @keyframes brickPop{
+    0%{ transform: translate(-50%,-50%) scale(0) rotate(var(--rot-start,0deg)); opacity:0; }
+    20%{ transform: translate(calc(-50% + var(--dx,0px)), calc(-50% - 22px)) scale(1) rotate(var(--rot-mid,10deg)); opacity:1; }
+    100%{ transform: translate(calc(-50% + var(--dx,0px) * 1.6), calc(-50% + 6px)) scale(0.85) rotate(var(--rot-end,25deg)); opacity:0; }
   }
 
   @media (prefers-reduced-motion: reduce){
     .mark svg{ animation:none; }
-    .gold-pop{ animation-duration: 0.01s; }
+    .brick-pop{ animation-duration: 0.01s; }
     .style-card, button#generateBtn{ transition:none; }
   }
 </style>
@@ -673,9 +737,9 @@
           </div>
           <div class="walk-overlay" id="walkOverlay">
             <h4>Click to walk through</h4>
-            <p>WASD or arrow keys to move, mouse to look around, Esc to exit back to the model view.</p>
+            <p>WASD or arrow keys to move, mouse to look around, 1 / 2 to jump between ground and upper floor, Esc to exit.</p>
           </div>
-          <div class="walk-exit-hint" id="walkExitHint">Esc to exit walkthrough</div>
+          <div class="walk-exit-hint" id="walkExitHint">1 / 2: switch floor · Esc: exit walkthrough</div>
         </div>
       </div>
 
@@ -731,6 +795,22 @@
         <tbody id="furnitureBody">
         </tbody>
       </table>
+    </section>
+
+    <section class="tips">
+      <div class="section-title">05 — Furniture suggestions</div>
+      <div class="tips-grid" id="tipsGrid"></div>
+    </section>
+
+    <section class="cost">
+      <div class="section-title">06 — Estimated cost</div>
+      <div class="panel" style="padding:18px;" id="costPanel">
+        <div class="cost-empty" id="costEmpty">Generate your home to see a rough construction cost estimate.</div>
+        <div id="costBody" style="display:none;">
+          <div class="cost-rows" id="costRows"></div>
+          <p class="cost-disclaimer">This is a rough, illustrative estimate only — not a quote. Actual construction costs vary widely by location, materials, labor rates, and site conditions. Get quotes from local contractors for real figures.</p>
+        </div>
+      </div>
     </section>
 
     <footer class="titleblock">
